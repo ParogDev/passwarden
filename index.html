@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PassWarden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: open-source project page. Narrow centered column, hero + install line, then demo panels, features, comparison, pricing, FAQ. */
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --ink: #15202b;
+  --muted: #5b6672;
+  --line: #dde1dc;
+  --brass: #a8761c;
+  --brass-soft: #f3e6c8;
+  --danger: #c2372b;
+  --danger-soft: #fbe3df;
+  --ok: #2e7d4f;
+  --code-bg: #15202b;
+  --code-fg: #e8ecef;
+  --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161c; --surface: #19212a; --ink: #e9edf0; --muted: #9aa6b2; --line: #2b3540;
+    --brass: #e0ad4e; --brass-soft: #3a2f18; --danger: #ff7b6b; --danger-soft: #3d1f1b; --ok: #6fcf97;
+    --code-bg: #0b0f13; --code-fg: #e8ecef; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161c; --surface: #19212a; --ink: #e9edf0; --muted: #9aa6b2; --line: #2b3540;
+  --brass: #e0ad4e; --brass-soft: #3a2f18; --danger: #ff7b6b; --danger-soft: #3d1f1b; --ok: #6fcf97;
+  --code-bg: #0b0f13; --code-fg: #e8ecef; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); padding-inline: 16px; }
+.wrap { max-width: 980px; margin-inline: auto; }
+a { color: var(--brass); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.1; margin: 0; }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; }
+h3 { font-size: 1.1rem; font-weight: 500; }
+p { margin: 0; }
+code, .mono { font-family: var(--mono); }
+.eyebrow { font: 600 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* Satire ribbon */
+.ribbon { background: var(--danger); color: #fff; text-align: center; font: 600 .8rem/1.4 var(--mono); padding: 8px 16px; margin-inline: -16px; }
+
+/* Nav */
+nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 20px; border-bottom: 1px solid var(--line); }
+.logo { display: flex; align-items: center; gap: 10px; font: 800 1.3rem/1 var(--display); color: var(--ink); text-decoration: none; }
+.logo svg { flex: none; }
+.navlinks { display: flex; gap: 20px; flex-wrap: wrap; font-size: .95rem; }
+.navlinks a { color: var(--muted); text-decoration: none; }
+.navlinks a:hover { color: var(--ink); }
+
+/* Hero */
+.hero { padding-block: 64px 40px; display: grid; gap: 22px; }
+.hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: var(--danger); }
+.hero .lede { font-size: 1.2rem; color: var(--muted); max-width: 60ch; }
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.badge { display: inline-flex; font: 500 .75rem/1 var(--mono); border-radius: 3px; overflow: hidden; }
+.badge span { padding: 5px 8px; }
+.badge span:first-child { background: #4a5560; color: #fff; }
+.badge .g { background: #3c9a5f; color: #fff; }
+.badge .r { background: #c2372b; color: #fff; }
+.badge .y { background: #c99a2e; color: #1b1b1b; }
+.install { background: var(--code-bg); color: var(--code-fg); border-radius: 8px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; min-width: 0; }
+.install pre { margin: 0; overflow-x: auto; font: .9rem/1.5 var(--mono); flex: 1; min-width: 0; }
+.install pre .p { color: #7f8b96; user-select: none; }
+.btn { font: 600 .9rem/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 10px 14px; border-radius: 6px; cursor: pointer; }
+.btn:hover { border-color: var(--brass); }
+.btn.primary { background: var(--brass); border-color: var(--brass); color: #fff; }
+.install .btn { background: transparent; color: var(--code-fg); border-color: #3a4651; flex: none; }
+.small { font-size: .85rem; color: var(--muted); }
+
+section { padding-block: 56px; border-top: 1px solid var(--line); display: grid; gap: 24px; }
+.sechead { display: grid; gap: 8px; max-width: 65ch; }
+.sechead p { color: var(--muted); }
+
+/* Demo panels */
+.demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.panel label { font-weight: 600; font-size: .9rem; }
+.panel input[type=text] { width: 100%; font: 1rem var(--mono); padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.pipe { display: grid; gap: 6px; font: .9rem/1.4 var(--mono); }
+.pipe div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; background: var(--bg); border-radius: 6px; min-width: 0; }
+.pipe div span:last-child { overflow-wrap: anywhere; text-align: right; }
+.pipe .final { background: var(--brass-soft); }
+.genout { font: 600 1.5rem/1.2 var(--mono); padding: 14px; background: var(--bg); border-radius: 6px; text-align: center; overflow-wrap: anywhere; }
+.row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.meter { height: 8px; border-radius: 4px; background: var(--ok); }
+.verdict { color: var(--ok); font-weight: 600; font-size: .9rem; }
+
+/* Vault table */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 600 .75rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td.pw { font-family: var(--mono); }
+.hidden-mode td.pw { font-style: italic; opacity: .85; }
+.tag { font: 600 .7rem/1 var(--mono); padding: 4px 6px; border-radius: 4px; background: var(--danger-soft); color: var(--danger); }
+
+/* Features */
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px 32px; }
+.feature { display: grid; gap: 6px; }
+.feature p { color: var(--muted); font-size: .95rem; }
+
+/* Compare */
+.compare td:not(:first-child), .compare th:not(:first-child) { text-align: center; }
+.yes { color: var(--ok); font-weight: 600; }
+.no { color: var(--danger); font-weight: 600; }
+
+/* Pricing */
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.tier { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: grid; gap: 12px; align-content: start; }
+.tier.pop { border: 2px solid var(--brass); }
+.price { font: 800 2.2rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.price small { font: 400 .9rem var(--body); color: var(--muted); }
+.tier ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--muted); font-size: .95rem; }
+
+/* Quotes */
+.quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+blockquote { margin: 0; display: grid; gap: 10px; }
+blockquote p { font: 500 1.15rem/1.4 var(--display); }
+blockquote cite { font-style: normal; font-size: .85rem; color: var(--muted); }
+
+/* FAQ */
+details { border-bottom: 1px solid var(--line); padding-block: 14px; }
+details summary { cursor: pointer; font-weight: 600; }
+details p { margin-top: 8px; color: var(--muted); max-width: 65ch; }
+
+footer { border-top: 1px solid var(--line); padding-block: 32px 48px; display: grid; gap: 8px; color: var(--muted); font-size: .9rem; }
+footer strong { color: var(--ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .genout.flash { animation: flash .4s ease; }
+  @keyframes flash { from { background: var(--brass-soft); } to { background: var(--bg); } }
+}
+</style>
+
+<div class="ribbon">This is a parody. PassWarden does not exist.</div>
+
+<div class="wrap">
+  <nav>
+    <a class="logo" href="#top" aria-label="PassWarden home">
+      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="4" y="12" width="20" height="14" rx="3" fill="var(--brass)"/>
+        <path d="M9 12V8a5 5 0 0 1 10 0" fill="none" stroke="var(--ink)" stroke-width="3" transform="rotate(-35 19 8)"/>
+        <circle cx="14" cy="19" r="2.2" fill="var(--bg)"/>
+      </svg>
+      PassWarden
+    </a>
+    <div class="navlinks">
+      <a href="#demo">Demo</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="badges" aria-label="Project badges">
+      <span class="badge"><span>build</span><span class="g">passing (tests skipped)</span></span>
+      <span class="badge"><span>encryption</span><span class="y">ROT13 × 2</span></span>
+      <span class="badge"><span>open CVEs</span><span class="r">412</span></span>
+      <span class="badge"><span>license</span><span class="g">WTFPL</span></span>
+    </div>
+    <h1>Your passwords,<br><em>everyone's</em> business.</h1>
+    <p class="lede">PassWarden is the open-source password manager built on radical transparency. Your vault is a text file. Your backup is a public paste. Your master password is the first line of both.</p>
+    <div class="install">
+      <pre><span class="p">$ </span><span id="installcmd">curl -s http://passwarden.example/install.sh | sudo bash -s -- --disable-firewall</span></pre>
+      <button class="btn" id="copybtn" type="button">Copy</button>
+    </div>
+    <p class="small">Requires admin rights, an internet connection, and a willingness to be in the news. Version 0.0.1-final-FINAL-v2.</p>
+  </header>
+
+  <section id="vault">
+    <div class="sechead">
+      <span class="eyebrow">passwords.txt · on your Desktop</span>
+      <h2>Your vault, at a glance</h2>
+      <p>Every credential, displayed in full, all the time. Example data below. Your real vault looks exactly the same, which is the problem.</p>
+    </div>
+    <div class="row">
+      <button class="btn" id="hidebtn" type="button" aria-pressed="false">Hide passwords</button>
+      <span class="small" id="hidenote">Hiding puts passwords in italics for discretion.</span>
+    </div>
+    <div class="tablewrap" id="vaulttable">
+      <table>
+        <thead><tr><th>Site</th><th>Username</th><th>Password</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>PassWarden master</td><td>me</td><td class="pw">1234</td><td><span class="tag">on line 1</span></td></tr>
+          <tr><td>Email</td><td>alex@example.com</td><td class="pw">1234</td><td><span class="tag">reused</span></td></tr>
+          <tr><td>Bank</td><td>alex@example.com</td><td class="pw">1234</td><td><span class="tag">reused</span></td></tr>
+          <tr><td>Work VPN</td><td>alex.admin</td><td class="pw">Password123!</td><td><span class="tag">generated</span></td></tr>
+          <tr><td>Router</td><td>admin</td><td class="pw">admin</td><td><span class="tag">factory default</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="sechead">
+      <span class="eyebrow">Try it in your browser</span>
+      <h2>See the technology</h2>
+      <p>Both demos run on this page only and send nothing anywhere. Shocking, we know.</p>
+    </div>
+    <div class="demos">
+      <div class="panel">
+        <h3>Military-grade double encryption</h3>
+        <label for="plain">Text to protect</label>
+        <input type="text" id="plain" value="my bank pin is 4321" autocomplete="off" spellcheck="false">
+        <div class="pipe" aria-live="polite">
+          <div><span>Input</span><span id="s0"></span></div>
+          <div><span>ROT13</span><span id="s1"></span></div>
+          <div><span>ROT13 again</span><span id="s2"></span></div>
+          <div class="final"><span>Stored as</span><span id="s3"></span></div>
+        </div>
+        <p class="small">Two rounds of ROT13 for twice the security. Any resemblance between the input and the output is a coincidence.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Strong password generator</h3>
+        <div class="genout" id="genout" aria-live="polite">Password123!</div>
+        <div class="meter" aria-hidden="true"></div>
+        <span class="verdict">Strength: Excellent. Meets every complexity rule.</span>
+        <div class="row">
+          <button class="btn primary" id="genbtn" type="button">Generate</button>
+          <label class="row" for="strong" style="gap:6px;font-weight:500">
+            <input type="checkbox" id="strong"> Strong mode
+          </label>
+        </div>
+        <p class="small" id="gencount">Generated 0 unique passwords this session. Each one is added to our public list to prevent duplicates.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="sechead">
+      <span class="eyebrow">Features</span>
+      <h2>Everything a password manager shouldn't do</h2>
+    </div>
+    <div class="features">
+      <div class="feature"><h3>Password hint = password</h3><p>Never get locked out again. The hint field autofills with your password.</p></div>
+      <div class="feature"><h3>Friendly lockout</h3><p>After three wrong guesses, we reveal the password to reduce frustration.</p></div>
+      <div class="feature"><h3>Effortless biometrics</h3><p>Type "yes, it's me" to unlock. Works for anyone who is you.</p></div>
+      <div class="feature"><h3>Inclusive 2FA</h3><p>A second password field that accepts any input, including none.</p></div>
+      <div class="feature"><h3>Smart autofill</h3><p>Fills your credentials into any site with "bank" in the domain. Even banksecure-login.example.</p></div>
+      <div class="feature"><h3>One-click sharing</h3><p>Posts any password to social media with a confetti animation.</p></div>
+      <div class="feature"><h3>Helpful support</h3><p>Our live agents ask for your master password to verify it's you. The app tells you to give it to them.</p></div>
+      <div class="feature"><h3>Breach monitoring</h3><p>We email you whenever your passwords appear in a breach. They always do. We put them there.</p></div>
+      <div class="feature"><h3>Total telemetry</h3><p>Every keystroke is logged to improve the product. The product has not improved.</p></div>
+    </div>
+  </section>
+
+  <section id="compare">
+    <div class="sechead">
+      <span class="eyebrow">Comparison</span>
+      <h2>How we stack up</h2>
+    </div>
+    <div class="tablewrap compare">
+      <table>
+        <thead><tr><th>Capability</th><th>PassWarden</th><th>Sticky note on monitor</th><th>A real password manager</th></tr></thead>
+        <tbody>
+          <tr><td>Encrypts your vault</td><td class="no">ROT13 × 2</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          <tr><td>Readable from across the room</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="no">No</td></tr>
+          <tr><td>Indexed by search engines</td><td class="yes">Yes</td><td class="no">No</td><td class="no">No</td></tr>
+          <tr><td>Survives a coffee spill</td><td class="no">No backups</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          <tr><td>Keeps your passwords secret</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="sechead">
+      <span class="eyebrow">Pricing</span>
+      <h2>Plans for every threat model</h2>
+    </div>
+    <div class="tiers">
+      <div class="tier">
+        <span class="eyebrow">Community</span>
+        <div class="price">$0 <small>/ forever</small></div>
+        <ul><li>Unlimited plaintext storage</li><li>Public pastebin backups</li><li>Ads drawn from your vault</li></ul>
+      </div>
+      <div class="tier pop">
+        <span class="eyebrow">Pro · most breached</span>
+        <div class="price">$9 <small>/ month</small></div>
+        <ul><li>Everything in Community</li><li>We stop posting your passwords on weekends</li><li>Priority support (they still ask for your password)</li></ul>
+      </div>
+      <div class="tier">
+        <span class="eyebrow">Enterprise</span>
+        <div class="price">Call us <small>/ we'll call you</small></div>
+        <ul><li>Shared vault for your whole company</li><li>Automatic delivery to your competitors</li><li>A SOC 2 report: a screenshot of the 🔒 emoji</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="quotes">
+    <div class="sechead">
+      <span class="eyebrow">What people say</span>
+      <h2>Loved by attackers everywhere</h2>
+    </div>
+    <div class="quotes">
+      <blockquote><p>"Saved me hours. I used to have to guess."</p><cite>A person in a hoodie, location unknown</cite></blockquote>
+      <blockquote><p>"Finally, a vault I can open without asking."</p><cite>Your former roommate</cite></blockquote>
+      <blockquote><p>"Our incident response team has never been busier."</p><cite>An IT department, in tears</cite></blockquote>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="sechead">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions we'd rather not answer</h2>
+    </div>
+    <div>
+      <details><summary>Is PassWarden zero-knowledge?</summary><p>Yes. Our developers have zero knowledge of security.</p></details>
+      <details><summary>What happens if I forget my master password?</summary><p>Answer the recovery question "What is your password?" Or open passwords.txt and read line 1.</p></details>
+      <details><summary>Has PassWarden ever been breached?</summary><p>"Breached" implies there was something in the way.</p></details>
+      <details><summary>Is this a real product?</summary><p>Not yet. Our Series A depends on investors not reading this page.</p></details>
+    </div>
+  </section>
+
+  <footer>
+    <span><strong>PassWarden</strong> · a parody project. Not a real product, company, or download.</span>
+    <span>© PassWarden. All rights reserved. All passwords shared.</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  function rot13(s) {
+    return s.replace(/[a-z]/gi, function (c) {
+      var base = c <= "Z" ? 65 : 97;
+      return String.fromCharCode((c.charCodeAt(0) - base + 13) % 26 + base);
+    });
+  }
+  var plain = document.getElementById("plain");
+  function encrypt() {
+    var a = plain.value, b = rot13(a), c = rot13(b);
+    document.getElementById("s0").textContent = a || "(empty)";
+    document.getElementById("s1").textContent = b || "(empty)";
+    document.getElementById("s2").textContent = c || "(empty)";
+    document.getElementById("s3").textContent = c || "(empty)";
+  }
+  plain.addEventListener("input", encrypt);
+  encrypt();
+
+  var count = 0, out = document.getElementById("genout");
+  document.getElementById("genbtn").addEventListener("click", function () {
+    var strong = document.getElementById("strong").checked;
+    out.textContent = "Password123!" + (strong ? new Date().getFullYear() : "");
+    count++;
+    document.getElementById("gencount").textContent =
+      "Generated " + count + " unique password" + (count === 1 ? "" : "s") +
+      " this session. Each one is added to our public list to prevent duplicates.";
+    out.classList.remove("flash"); void out.offsetWidth; out.classList.add("flash");
+  });
+
+  var hidden = false, hidebtn = document.getElementById("hidebtn");
+  hidebtn.addEventListener("click", function () {
+    hidden = !hidden;
+    document.getElementById("vaulttable").classList.toggle("hidden-mode", hidden);
+    hidebtn.textContent = hidden ? "Show passwords" : "Hide passwords";
+    hidebtn.setAttribute("aria-pressed", String(hidden));
+    document.getElementById("hidenote").textContent = hidden
+      ? "Passwords are now hidden in italics."
+      : "Hiding puts passwords in italics for discretion.";
+  });
+
+  var copybtn = document.getElementById("copybtn");
+  copybtn.addEventListener("click", function () {
+    var text = document.getElementById("installcmd").textContent;
+    function done() { copybtn.textContent = "Copied. Please don't run it."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {
+        var r = document.createRange(); r.selectNodeContents(document.getElementById("installcmd"));
+        var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      });
+    }
+  });
+})();
+</script>
